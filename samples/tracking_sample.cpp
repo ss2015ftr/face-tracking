@@ -19,6 +19,7 @@ void help(const char *argv0)
         "$ ./bin/tracking_sample FaceTracker ../dataset/xxx.mp4\n\n"
         "$ ./bin/tracking_sample FaceTracker ../dataset/xxx.mp4 142,125,232,164\n\n"
         "$ ./bin/tracking_sample FaceTracker ../dataset/xxx.mp4 ../dataset/xxx.txt\n\n"
+        "$ ./bin/tracking_sample FaceTracker camera\n\n"
               << std::endl;
 }
 
