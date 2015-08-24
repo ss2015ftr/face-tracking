@@ -103,30 +103,32 @@ int main( int argc, const char** argv )
 	std::vector<Rect> faces;
 	
 
-	// Mat frame_gray;
-    //cvtColor( frame, frame_gray, CV_BGR2GRAY );
 
     // Run tracking
     while (true)
     {
         // Fetch next frame
         cap >> frame;
-        if(frame.empty())
-            break;
+        while(frame.empty())  
+    {  
+        cap >> frame;  
+    }  
 
+		
 		dr.Detect( frame, faces);
 	    for( size_t i = 0; i < faces.size(); i++ )
         {
         
-           rectangle(frame, Point(faces[i].x, faces[i].y), Point(faces[i].x + faces[i].width, faces[i].y + faces[i].height), Scalar(0,255,0), 2, 1);
-
-         //  Mat faceROI = frame_gray( faces[i] );
+          rectangle(frame, faces[i], Scalar(255,0,0), 2); 
              
         }
-		cv::Rect position;
-	    imshow("face", frame);
-        bool found = tracker->track(frame, position);
-		/*
+
+ 
+        imshow("detections", frame);  
+
+	   
+       
+		
         // Track object
         cv::Rect position;
         bool found = tracker->track(frame, position);
@@ -149,7 +151,7 @@ int main( int argc, const char** argv )
                               rect_color,
                               gt))
             break;
-			*/
+			
     }
 
 	

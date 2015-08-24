@@ -14,7 +14,7 @@ class Detector{
 public:
 	 Detector( String F_c_n = "haarcascade_frontalface_alt.xml")
 	 {
-          face_cascade_name = F_c_n;
+          face_cascade.load(F_c_n);
 		  RNG rng(12345);
 	 }
 	 void Detect(const Mat& fr, std::vector<Rect> &fcs);
