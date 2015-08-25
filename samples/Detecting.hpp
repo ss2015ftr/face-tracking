@@ -8,7 +8,10 @@
 
 using namespace std;
 using namespace cv;
-class Detector{
+
+
+class Detector
+{
 	 String face_cascade_name;
      CascadeClassifier face_cascade;
 public:
