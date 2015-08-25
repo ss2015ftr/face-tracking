@@ -9,8 +9,7 @@ cv::Ptr<Tracker> createTrackerKustikova();
 cv::Ptr<Tracker> createTracker(const std::string &impl_name)
 {
     if (impl_name == "FaceTracker")
-       // return createFaceTracker();
-	return createTrackerKustikova();
+        return createFaceTracker();
     // TODO: Add case for your implementation
     // else if (impl_name == "grishin")
       //  return createTrackerGrishin();
