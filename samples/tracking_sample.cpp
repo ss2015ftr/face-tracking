@@ -1,11 +1,9 @@
 #include "tracker.hpp"
 #include "gui.hpp"
 #include "benchmark.hpp"
-#include "Detecting.hpp"
 
 #include <iostream>
 #include <fstream>
-
 
 void help(const char *argv0)
 {
@@ -18,10 +16,9 @@ void help(const char *argv0)
         "of a bounding box in the described format. Examples can also be found \n"
         "in the\"dataset\" folder.\n\n"
         "Examples:\n\n"
-        "$ ./bin/tracking_sample FaceTracker ../dataset/xxx.mp4\n\n"
-        "$ ./bin/tracking_sample FaceTracker ../dataset/xxx.mp4 142,125,232,164\n\n"
-        "$ ./bin/tracking_sample FaceTracker ../dataset/xxx.mp4 ../dataset/xxx.txt\n\n"
-        "$ ./bin/tracking_sample FaceTracker camera\n\n"
+        "$ ./bin/tracking_sample dummy ../dataset/xxx.mp4\n\n"
+        "$ ./bin/tracking_sample dummy ../dataset/xxx.mp4 142,125,232,164\n\n"
+        "$ ./bin/tracking_sample dummy ../dataset/xxx.mp4 ../dataset/xxx.txt\n\n"
               << std::endl;
 }
 
@@ -52,7 +49,7 @@ int main( int argc, const char** argv )
 
     // Open the video file
     cv::VideoCapture cap;
-    if(video_name != "camera")
+	if(video_name != "camera")
     {
         cap.open( video_name );
     }
@@ -70,7 +67,7 @@ int main( int argc, const char** argv )
 
     // Get the first frame
     cv::Mat frame;
-    while(frame.empty())
+   while(frame.empty())
     {
         cap >> frame;
     }
@@ -99,29 +96,13 @@ int main( int argc, const char** argv )
         return 1;
     }
 
-
-    // Detector Haar ON
-	Detector dr("haarcascade_frontalface_alt.xml");
-	std::vector<Rect> faces;
     // Run tracking
     while (true)
     {
         // Fetch next frame
         cap >> frame;
-        while(frame.empty())
-        {  
-        cap >> frame;
-        }  
-
-		//
-		dr.Detect( frame, faces);
-	    for( size_t i = 0; i < faces.size(); i++ )
-        {
-          rectangle(frame, faces[i], Scalar(255,0,0), 2);    
-        }
-
-        //
-        imshow("detections", frame);  
+        if(frame.empty())
+            break;
 
         // Track object
         cv::Rect position;
@@ -129,9 +110,7 @@ int main( int argc, const char** argv )
 
         // Compare the predicted position with ground truth, if known
         cv::Rect gt = gt_reader.next();
-		
         cv::Scalar rect_color = cv::Scalar(0, 255, 0);
-		
         if (gt_reader.isOpen() && !pr_evaluator.updateMetrics(position, gt))
         {
             // Make rect red, if the prediction is incorrect
@@ -141,11 +120,11 @@ int main( int argc, const char** argv )
         // Display frame with predicted and ground truth rectangles, if known
         if (!gui.displayImage(frame,
                               found ? position : cv::Rect(),
-                              rect_color, gt)) break;
-			
+                              rect_color,
+                              gt))
+            break;
     }
 
-	
     if (gt_reader.isOpen())
     {
         std::pair<float, float> metrics = pr_evaluator.getMetrics();
