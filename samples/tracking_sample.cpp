@@ -1,6 +1,8 @@
 #include "tracker.hpp"
 #include "gui.hpp"
 #include "benchmark.hpp"
+#include "Detecting.hpp"
+
 
 #include <iostream>
 #include <fstream>
@@ -32,6 +34,7 @@ static const char* keys =
 
 int main( int argc, const char** argv )
 {
+
     cv::CommandLineParser parser( argc, argv, keys );
 
     // Parse and validate input parameters
@@ -96,22 +99,45 @@ int main( int argc, const char** argv )
         std::cout << "Error: can't initialize tracker..." << std::endl;
         return 1;
     }
+	Detector dr("haarcascade_frontalface_alt.xml");
+	std::vector<Rect> faces;
+	
+
 
     // Run tracking
     while (true)
     {
         // Fetch next frame
         cap >> frame;
-        if(frame.empty())
-            break;
+        while(frame.empty())  
+    {  
+        cap >> frame;  
+    }  
 
+		
+		dr.Detect( frame, faces);
+	    for( size_t i = 0; i < faces.size(); i++ )
+        {
+        
+          rectangle(frame, faces[i], Scalar(255,0,0), 2); 
+             
+        }
+
+ 
+        imshow("detections", frame);  
+
+	   
+       
+		
         // Track object
         cv::Rect position;
         bool found = tracker->track(frame, position);
 
         // Compare the predicted position with ground truth, if known
         cv::Rect gt = gt_reader.next();
+		
         cv::Scalar rect_color = cv::Scalar(0, 255, 0);
+		
         if (gt_reader.isOpen() && !pr_evaluator.updateMetrics(position, gt))
         {
             // Make rect red, if the prediction is incorrect
@@ -119,13 +145,16 @@ int main( int argc, const char** argv )
         }
 
         // Display frame with predicted and ground truth rectangles, if known
+		
         if (!gui.displayImage(frame,
                               found ? position : cv::Rect(),
                               rect_color,
                               gt))
             break;
+			
     }
 
+	
     if (gt_reader.isOpen())
     {
         std::pair<float, float> metrics = pr_evaluator.getMetrics();
