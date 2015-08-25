@@ -107,6 +107,7 @@ int main( int argc, const char** argv )
     while (true)
     {
         // Fetch next frame
+        cap >> frame;
         while(frame.empty())
         {  
         cap >> frame;
